@@ -1,0 +1,52 @@
+/*============================================================
+  Filename:      lock_in_v0__calculator.vams
+  Created On:    2016-04-18 21:44:24
+  Last Modified: 2016-10-31 22:09:28 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+
+module calculator (
+	input electrical I,Q,
+	output electrical amp,phase
+);
+	
+	//External variables
+	real freq = 100e6;
+	real in_amp = 1;
+	real i2v_gain = 1e3; 
+
+	real final_cap, final_res, final_G;
+	integer v_file;
+
+	
+
+    analog begin
+
+    	V(phase) <+ atan2(V(Q),V(I));
+    	V(amp) <+ 2*V(Q)/sin(V(phase));
+
+    	final_cap = V(amp) * sin(V(phase)) / (in_amp*i2v_gain*2*`M_PI*freq);
+      final_G = (V(amp) * cos(V(phase))) / (in_amp*i2v_gain);
+      if (final_G < 1e-7) final_G = 1e-7;
+      final_res = 1/final_G;
+
+    	$display("TEC-INFO => %M: Measured capacitance/resistance at time %e : %rF/%rOhms", $abstime,final_cap,final_res);
+
+    	@(final_step) begin
+    		$display("TEC-INFO => Measured capacitance: %rF/%rOhms", final_cap, final_res);
+    		v_file=$fopen("/home/local/ESTUDIANTES/ovillalta/TesisMaestria/work/lock_in_v0.rpt");
+     		$fwrite(v_file,"TEC-INFO => Measured capacitance/resistance: %rF/%rOhms", $abstime,final_cap,final_res);
+     		$fclose(v_file);
+    	end
+
+    end
+
+endmodule

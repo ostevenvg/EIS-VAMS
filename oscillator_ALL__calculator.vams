@@ -1,0 +1,55 @@
+/*============================================================
+  Filename:      oscillator_ALL__calculator.vams
+  Created On:    2017-01-17 13:39:03
+  Last Modified: 2017-01-17 19:09:32 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module calculator (
+	input [31:0] count,
+	input count_en,
+	input all,
+	input wreal fsensor,
+	input voltage vctrl,
+	output wreal Gsensor,
+	output wreal Csensor
+);
+
+assign Gsensor = Gs;
+assign Csensor = Cs;
+
+//External variables
+real Tmeasure = 2e-6;
+//Ring oscillator variables
+real Gd = 5e-2;
+real Gc = 5e-2;
+real Cref = 3e-12; 
+real Ndiv = 32;
+
+//Internal variables
+real fref, Gs, Cs, fsensor_, Gref;
+
+analog begin
+	fref = count / Tmeasure;
+	fsensor_ = fsensor * Ndiv;
+	Gref = Gd + Gc * V(vctrl);
+end
+
+always @(negedge count_en) begin
+
+	if (all) begin
+		Cs = Cref * (fref-fsensor_)/fsensor_;
+	end
+	else begin
+		Gs = Gref * (Cs/Cref - (fref-fsensor_)/fsensor_);
+	end
+end
+
+endmodule

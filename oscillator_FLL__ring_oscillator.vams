@@ -1,0 +1,33 @@
+/*============================================================
+  Filename:      oscillator_FLL__ring_oscillator.vams
+  Created On:    2016-08-23 17:51:04
+  Last Modified: 2017-01-17 20:20:56 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module ring_oscillator (
+	output voltage out,
+  input wreal Csensor
+);
+
+	parameter C=1e-12, R=21e3, Vdd=1;
+	real fosc, vsin, phase;
+
+    analog begin
+    	//fosc -> radians
+      fosc = 35 / (R* (C + Csensor));
+      phase = idtmod(fosc, 0, 2.0*`M_PI, 0);
+    	vsin  = sin(phase);	
+
+    	if (vsin > 0) V(out) <+ Vdd;
+    	else V(out) <+ 0;
+    end
+
+endmodule

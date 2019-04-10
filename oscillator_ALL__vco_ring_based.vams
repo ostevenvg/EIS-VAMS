@@ -1,0 +1,70 @@
+/*============================================================
+  Filename:      oscillator_ALL__vco_ring_based.vams
+  Created On:    2016-06-23 22:03:10
+  Last Modified: 2017-01-17 14:11:00 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module vco_ring_based (
+	output voltage vout,
+	input voltage vctrl,
+	input voltage ALL_amp,
+	input ALL
+);
+	
+/*
+Iosc : Cell delays current
+Amp  : output amplitude
+freq : oscillation frequency
+N    : number of stages 
+
+Gc   : discrete value for tunning conductance
+Gd   : total tunning conductance = GC * gctrl
+Gs   : Sensor conductance
+G_ALL : extra conductance for amplitude lock to ALL_amp voltage
+k_ALL : amplitude control gain
+Gt   : total conductance
+
+Cd   : dummpy capacitance
+Cs   : Sensor capacitance
+Ct   : total capacitance
+*/
+	
+	parameter real Gs=0, Cs=0, Gc=1/1.5k, Cd=1p, Vdd=1, Vref=0.3;
+
+	real Iosc, Amp, freq, phase, Gd, Gt, G_ALL, Ct, N=3, k_ALL=0.8;
+
+    analog begin
+    	//Oscillator frequency tunning through output impedance
+    	if (V(vctrl) < 0) Gd = Gc;
+    	else Gd = Gc  + Gc * V(vctrl);
+
+    	//Constant amplitude fixed by Vref through oscillator current
+      Iosc = (Vdd-Vref)*2*Gd;
+
+      //oscillator amplitude control through extra output impedance
+    	if (ALL) G_ALL = (4/`M_PI)*(Iosc/(k_ALL*V(ALL_amp)))*cos(`M_PI/N) - Gd - Gs;
+    	else G_ALL = 0;
+
+    	//Total oscillator output conductance and capacitance
+    	Gt = Gd + Gs + G_ALL;
+    	Ct = Cd + Cs;
+
+    	freq = (1/(2*`M_PI))*(Gt/Ct)*tan(`M_PI/N); 
+    	Amp  = (4/`M_PI)*(Iosc/Gt)*cos(`M_PI/N);
+
+		//$monitor("TEC-INFO => TotalCap: %r | TotalG: %r | vctrl: %r | freq: %r | amp: %r | Iosc: %r",Ct,Gt,V(vctrl),freq,Amp,Iosc);
+
+		phase = idtmod(freq, 0, 2.0*`M_PI, 0);
+    	//V(vout) <+ Amp*sin(2.0*`M_PI*freq*$abstime);
+    	V(vout) <+ Amp*sin(phase);
+    end
+
+endmodule

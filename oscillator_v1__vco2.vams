@@ -1,0 +1,45 @@
+/*============================================================
+  Filename:      oscillator_v1__vco2.vams
+  Created On:    2016-04-26 21:58:39
+  Last Modified: 2016-11-09 22:26:05 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module vco2  (
+	input voltage in,
+	output voltage out,
+  input wreal Csensor
+);
+
+	parameter real fnom=500e6, gain=200e6, amp=1;
+  real phase, fvco, cap, vin;
+
+    analog begin
+      if (Csensor<1e-14) begin
+        cap = 1e-14;
+      end
+      else begin
+        cap = Csensor;
+      end
+      vin = V(in);
+      if (vin<0) begin
+        vin = 0;
+      end
+      //cap = transition (cap_tmp,1e-9);
+    	fvco = 1e-12*fnom/cap+gain*vin;
+    	if(fvco<0) fvco = 0;
+    	phase = idtmod(fvco, 0, 1, 0);
+    	//V(out) <+ amp*sin(2*`M_PI*phase);
+    	//square generatosr
+    	if(phase>0.5) V(out) <+ amp;
+    	else V(out) <+ -amp;
+    end
+
+endmodule

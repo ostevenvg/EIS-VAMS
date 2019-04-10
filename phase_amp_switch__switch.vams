@@ -1,0 +1,44 @@
+/*============================================================
+  Filename:      phase_amp_switch__switch.vams
+  Created On:    2016-08-16 22:36:37
+  Last Modified: 2017-02-01 21:17:35 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module switch (
+	input voltage in1,
+	input voltage in2,
+	output voltage out1,
+	output voltage out2,
+	input voltage sw1,
+	input voltage sw2
+);
+
+	parameter sw_level = 0;
+
+    analog begin
+    	if (V(sw1)>sw_level) begin  
+       V(out1) <+ V(in1);
+   		 V(out2) <+ V(in2);
+      end
+      else begin
+       V(out1) <+ V(in2);
+       V(out2) <+ V(in1);
+      end
+
+
+     /* if (V(sw2)>sw_level) begin  
+       V(out1) <+ V(in2);
+       V(out2) <+ V(in1);
+      end
+      */
+    end
+
+endmodule

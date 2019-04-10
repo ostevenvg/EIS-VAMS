@@ -1,0 +1,32 @@
+/*============================================================
+  Filename:      comparator.vams
+  Created On:    2016-08-11 21:23:42
+  Last Modified: 2016-08-13 16:43:47 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module comparator (
+	input voltage in_pos,
+	input voltage in_neg,
+	output voltage out
+);
+	
+	parameter real gain=1000, vdd=1, vss=0, slew_rate=1e12;
+	real vout;
+
+    analog begin
+    	vout = gain*(V(in_pos)-V(in_neg));
+    	if (vout > vdd) vout = vdd;
+    	if (vout < vss) vout = vss;
+
+    	V(out) <+ slew(vout,slew_rate);
+    end
+
+endmodule

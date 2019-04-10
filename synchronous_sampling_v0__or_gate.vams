@@ -1,0 +1,24 @@
+/*============================================================
+  Filename:      or.vams
+  Created On:    2016-08-21 21:22:26
+  Last Modified: 2016-08-21 21:24:33 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module or_gate (
+	input in1,
+	input in2,
+	output out
+);
+
+
+   assign out = in1 || in2;
+
+endmodule

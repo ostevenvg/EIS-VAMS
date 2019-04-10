@@ -1,0 +1,37 @@
+/*============================================================
+  Filename:      frequency_divider.vams
+  Created On:    2016-03-24 14:42:21
+  Last Modified: 2016-04-26 23:29:53 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: frequency divider for a PLL 
+============================================================*/
+
+`include "disciplines.h"
+
+module frequency_divider(
+	input  in, 
+	output reg out
+);
+	
+	parameter integer n = 8;
+	integer limit = n/2;
+	integer count = 0;
+	
+	initial begin
+		out = 0;
+	end 
+
+	always @(posedge in) begin
+		count = count + 1;
+		if (count == limit) begin
+			out <= ~out;
+			count = 0;
+		end
+	end
+
+endmodule
+
+

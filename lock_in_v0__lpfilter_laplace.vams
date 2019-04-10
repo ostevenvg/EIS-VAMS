@@ -1,0 +1,26 @@
+/*============================================================
+  Filename:      lpfilter_laplace.vams
+  Created On:    2016-04-25 22:45:57
+  Last Modified: 2016-04-25 23:06:54 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module lpfilter_laplace (
+	inout electrical in, out 
+);
+	
+	electrical out_;
+
+    analog begin
+    	V(out_) <+ laplace_nd(V(in), {6250000}, {6250000,1});
+    	V(out)  <+ laplace_nd(V(out_), {6250000}, {6250000,1});
+    end
+
+endmodule

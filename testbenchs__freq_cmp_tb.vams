@@ -1,0 +1,56 @@
+/*============================================================
+  Filename:      freq_cmp_tb.vams
+  Created On:    2016-08-22 21:01:46
+  Last Modified: 2016-08-22 21:02:30 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+`include "disciplines.h"
+`include "constants.h"
+`timescale 1ns/1ps
+
+module freq_cmp_tb (
+	output voltage vsin,
+	output voltage vsq1,
+	output voltage vsq2,
+	output reg rst
+);
+	
+	real fsin=1e9, fsq1=100e6, fsq2=100e6, ampl=1, offset=0;
+	voltage vsin1,vsin2;
+
+	initial begin
+		#0
+		rst <=0;
+		#100
+		rst <=1;
+		#100
+		rst <=0;
+		#1000
+		rst <=1;
+		fsq1 = 233e6;
+		#100
+		rst <=0;
+		#1000
+		rst <=1;
+		fsq2 = 600e6;
+		#100
+		rst <=0;
+	end
+
+    analog begin
+    	V(vsin) <+ ampl*sin(2.0*`M_PI*fsin*$abstime) + offset;
+    	V(vsin1) <+ ampl*sin(2.0*`M_PI*fsq1*$abstime) + offset;
+    	V(vsin2) <+ ampl*sin(2.0*`M_PI*fsq2*$abstime) + offset;
+
+    	if(V(vsin1)>offset) V(vsq1) <+ ampl;
+		else V(vsq1) <+ -ampl;
+
+		if(V(vsin2)>offset) V(vsq2) <+ ampl;
+		else V(vsq2) <+ -ampl;
+    end
+
+endmodule

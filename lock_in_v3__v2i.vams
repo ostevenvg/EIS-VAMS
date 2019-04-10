@@ -1,0 +1,27 @@
+/*============================================================
+  Filename:      lock_in_v3__v2i.vams
+  Created On:    2016-04-17 22:36:43
+  Last Modified: 2017-03-08 22:08:12 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module v2i (
+	input voltage in,
+	output current iout1, iout2
+);
+
+	parameter gain=1e-3;
+
+  	analog begin
+  		I(iout1) <+ gain * V(in);
+      I(iout2) <+ gain * V(in);
+    end
+
+endmodule

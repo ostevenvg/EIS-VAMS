@@ -1,0 +1,25 @@
+/*============================================================
+  Filename:      lock_in_v1__sensor2.vams
+  Created On:    2016-04-17 22:29:07
+  Last Modified: 2016-10-25 22:41:25 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module sensor2 (
+	inout electrical load,
+  input wreal C_in,
+  input wreal R_in
+);
+  
+  analog begin
+  		I(load) <+ C_in * ddt(V(load)) + V(load)/R_in;
+  end
+
+endmodule

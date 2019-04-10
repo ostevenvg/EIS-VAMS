@@ -1,0 +1,28 @@
+/*============================================================
+  Filename:      oscillator_v2__charge_pump.vams
+  Created On:    2016-03-24 14:42:21
+  Last Modified: 2017-01-02 10:08:12 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+
+module charge_pump(
+	input  u, d,
+	output current out
+	);
+	
+	parameter real ip=15e-6;
+	parameter real ip_off=1e-9; 
+
+	analog begin
+		if (u)      I(out) <+ -ip;
+		else if (d) I(out) <+ +ip;
+		else        I(out) <+ ip_off;
+	end
+
+endmodule

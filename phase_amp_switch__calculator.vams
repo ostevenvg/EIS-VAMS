@@ -1,0 +1,55 @@
+/*============================================================
+  Filename:      phase_amp_switch__calculator.vams
+  Created On:    2017-01-20 16:04:57
+  Last Modified: 2017-02-01 21:24:16 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+`timescale 100ps/1ps
+
+module calculator (
+	input voltage vamp,
+	input voltage vphase,
+	input wreal fref,
+	output wreal Csensor,
+	output wreal Rsensor
+);
+
+assign Csensor = Csx;
+assign Rsensor = Rsx;
+
+//external variables
+real Amp_Iin = 1e-6;
+real Gdiffamp = 1e3;
+real Gintegrator = 1e4;
+
+real Cs=0, Rs=0, Zphase_rad=0, Zamp=0;
+real Csx, Rsx;
+
+analog begin
+	Zphase_rad = -V(vphase)*fref*2*`M_PI / Gintegrator;
+	Zamp = V(vamp) * `M_PI / (2*Gdiffamp*Amp_Iin);
+
+	//Parallel R/C configuration
+	//Rs = Zamp * cos(Zphase_rad)*(1+tan(Zphase_rad)*tan(Zphase_rad));
+	//Cs = -tan(Zphase_rad) / (2*`M_PI*fref*Rs);
+
+	//Series R/C configuration
+	Rs = Zamp * cos(Zphase_rad);
+	if (fref*Zamp*sin(Zphase_rad) != 0) Cs = -1 / (2*`M_PI*fref*Zamp*sin(Zphase_rad));
+end
+
+//Update wreal outputs
+always begin
+	#1
+	Csx = Cs;
+	Rsx = Rs;
+end
+
+endmodule

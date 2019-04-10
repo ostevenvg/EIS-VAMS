@@ -1,0 +1,72 @@
+/*============================================================
+  Filename:      freq_comparator.vams
+  Created On:    2016-08-22 19:53:51
+  Last Modified: 2016-08-22 22:41:55 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module fifo (
+	input clk,
+	input clr,
+	input d,
+	output reg q
+);
+	
+
+	always @(posedge  clk or posedge clr) begin
+		if (clr) q <= 0;
+		else q <= d;	
+	end
+
+endmodule
+
+module pulse_gen (
+	input voltage in,
+	output voltage out
+);
+
+
+    real pulse_width = 20p, vdd = 1;
+    real vin_d, vout;
+	voltage in_d=0; 
+
+	analog begin
+		if (V(in) > vdd/2) vin_d = 0;
+		else vin_d = vdd;
+		V(in_d) <+ transition(vin_d,pulse_width);
+
+		if (V(in) > vdd/2 && V(in_d) > vdd/2) vout = 1;
+		else vout = 0;
+		V(out) <+ vout;
+	end
+	
+endmodule
+
+
+module freq_comparator (
+	input in1,
+	input in2,
+	input rst,
+	output out1,
+	output out2
+);
+	
+	pulse_gen pulse_gen1 (in1, clr1);
+	pulse_gen pulse_gen2 (in2, clr2);
+
+	fifo fifo1 (in1,clr2,1'b1,o1  );
+	fifo fifo2 (in1,clr2,o1  ,o2  );
+	fifo fifo3 (o2 ,rst,1'b1,out1);
+
+	fifo fifo4 (in2,clr1,1'b1,o4  );
+	fifo fifo5 (in2,clr1,o4  ,o5  );
+	fifo fifo6 (o5 ,rst,1'b1,out2);
+
+endmodule

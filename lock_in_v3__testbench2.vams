@@ -1,0 +1,63 @@
+/*============================================================
+  Filename:      lock_in_v3__testbench2.vams
+  Created On:    2016-04-17 21:34:25
+  Last Modified: 2017-04-02 17:01:53 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+`timescale 1ns/1ps
+
+module testbench2 (
+	output wreal freq_out,C_out,R_out,
+	output voltage Vcos,
+	output current Isin,
+	inout electrical ref
+);
+
+	//Sin generator parameters
+	real freq, Cap, Res, ampli=1e-6, amplv=1, offset=0;			
+	integer k;
+
+	//assign value to output
+    assign freq_out = freq;
+    assign C_out    = Cap;
+    assign R_out   = Res;
+
+    //initial conditions
+    initial begin
+    	freq = 1e6;
+    	Cap  = 7.8e-12;
+    	Res  = 1e6;
+    end
+
+	analog begin	
+		I(Isin,ref) <+ ampli*sin(2.0*`M_PI*freq*$abstime+`M_PI/2) + offset;
+		V(Vcos,ref) <+ amplv*cos(2.0*`M_PI*freq*$abstime+`M_PI/2) + offset;
+		V(ref) <+ 0;
+	end
+
+	initial begin
+		//Frequency swept
+		for (k=2; k<=3; k=k+1) begin
+			#5000 freq =  k * 1e6;
+		end
+		for (k=2; k<=3; k=k+1) begin
+			#5000 freq =  k * 10e6;
+		end
+
+		//Capacitance swept
+		for (k=2; k<=1e5; k=k+1) begin
+			#5000 Cap = 7.8e-12+4e-12*k;
+		end
+	end
+
+
+
+endmodule
+

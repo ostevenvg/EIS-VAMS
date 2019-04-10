@@ -1,0 +1,30 @@
+/*============================================================
+  Filename:      testbenchs__IS_phase_amp_switch_tb.vams
+  Created On:    2016-08-11 21:56:45
+  Last Modified: 2017-01-20 16:19:58 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module IS_phase_amp_switch_tb (
+	output voltage sin_pos,
+	output voltage sin_neg,
+  output wreal fref
+);
+  
+  assign fref = freq;
+
+	real ampl=1, freq=100e6, offset=0, phase=-`M_PI/3;
+
+    analog begin
+    	V(sin_pos) <+  ampl*sin(2.0*`M_PI*freq*$abstime) + offset;	
+    	V(sin_neg) <+ -ampl*sin(2.0*`M_PI*freq*$abstime) + offset;	
+    end
+
+endmodule

@@ -1,0 +1,54 @@
+/*============================================================
+  Filename:      testbenchs__FLL_tb.vams
+  Created On:    2016-08-22 21:57:53
+  Last Modified: 2017-01-30 19:56:45 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+`include "disciplines.h"
+`include "constants.h"
+`timescale 1ns/1ps
+
+module FLL_tb (
+	output voltage vsin,
+	output voltage vsq1,
+	output voltage vsq2,
+	output reg rst,
+	output wreal Csensor,
+	output wreal Fref
+);
+	
+	assign Csensor = Cs;
+	assign Fref = fsq1;
+
+	real fsin=2e6, fsq1=2e6, fsq2=3e6, ampl=1, offset=0;
+	real Cs=0.4e-12;
+	voltage vsin1,vsin2;
+
+	initial begin
+		//Cs=2.1e-12;
+		//fsq1 = 1e6;
+		#100000
+		Cs = 1.8e-12;
+		//fsq1 = 3e6;
+		#100000
+		Cs = 3.1e-12;
+		//fsq1 = 17e6;
+	end
+
+    analog begin
+    	V(vsin) <+ ampl*sin(2.0*`M_PI*fsin*$abstime) + offset;
+    	V(vsin1) <+ ampl*sin(2.0*`M_PI*fsq1*$abstime) + offset;
+    	V(vsin2) <+ ampl*sin(2.0*`M_PI*fsq2*$abstime) + offset;
+
+    	if(V(vsin1)>offset) V(vsq1) <+ ampl;
+		else V(vsq1) <+ -ampl;
+
+		if(V(vsin2)>offset) V(vsq2) <+ ampl;
+		else V(vsq2) <+ -ampl;
+    end
+
+endmodule

@@ -1,0 +1,26 @@
+/*============================================================
+  Filename:      i2v.vams
+  Created On:    2016-04-17 22:36:43
+  Last Modified: 2016-04-25 12:17:34 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module i2v (
+	input current in, ref,
+	output voltage out
+);
+
+	parameter gain=1e3;
+
+  	analog begin
+  		V(out) <+ gain * I(in,ref);
+    end
+
+endmodule

@@ -1,0 +1,27 @@
+/*============================================================
+  Filename:      lock_in_v3__amp.vams
+  Created On:    2017-04-02 11:12:38
+  Last Modified: 2017-04-02 11:15:24 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module amp (
+	input voltage in,
+	output voltage out
+);
+
+
+	parameter gain = 1e6;
+    
+    analog begin
+    	V(out) <+ gain * V(in);
+    end
+
+endmodule

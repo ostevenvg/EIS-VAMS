@@ -1,0 +1,28 @@
+/*============================================================
+  Filename:      divider_by_2.vams
+  Created On:    2016-08-22 19:56:16
+  Last Modified: 2016-08-22 19:58:06 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module divider_by_2 (
+	input in,
+	output reg out
+);
+
+	initial begin
+		out = 0;
+	end
+
+    always @(posedge in) begin
+    	out  <= ~out;
+    end
+
+endmodule

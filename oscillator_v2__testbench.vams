@@ -1,0 +1,57 @@
+/*============================================================
+  Filename:      oscillator_v2__testbench.vams
+  Created On:    2016-04-17 21:34:25
+  Last Modified: 2017-01-02 16:17:49 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+`timescale 1ns/1ps
+
+module testbench (
+	output voltage vsin, vsquare,
+	output wreal freq_out
+);
+
+	//Sin generator parameters
+	real freq, ampl=1, offset=0;			
+	integer k;
+
+	//assign value to output
+    assign freq_out = freq;
+
+    //initial conditions
+    initial begin
+    	freq =5e6;
+    	#100000 freq = 6.25e6;
+    	#100000 freq = 15e6;
+    	#100000 freq = 50e6;
+    	#100000 freq = 100e6;
+    end
+
+	analog begin	
+		V(vsin) <+ ampl*sin(2.0*`M_PI*freq*$abstime) + offset;
+		
+		if(V(vsin)>0) V(vsquare) <+ ampl;
+		else V(vsquare) <+ -ampl;
+	end
+
+	/*
+	initial begin
+		for (k=2; k<=10; k=k+1) begin
+			#500 freq =  k * 1e6;
+		end
+		for (k=2; k<=10; k=k+1) begin
+			#500 freq =  k * 10e6;
+		end
+	end
+	*/
+
+
+endmodule
+

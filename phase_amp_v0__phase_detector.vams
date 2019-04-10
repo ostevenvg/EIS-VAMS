@@ -1,0 +1,34 @@
+/*============================================================
+  Filename:      phase_amp_v0__phase_detector.vams
+  Created On:    2016-08-11 21:33:40
+  Last Modified: 2016-11-20 16:12:35 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module phase_detector (
+	input voltage in_ref,
+	input voltage in_sen,
+	output voltage out  
+);
+
+	parameter delay = 45e-12;
+	voltage in_ref_delayed=0, in_sen_delayed=0, vout;
+	real out_ref, out_sen;
+
+    analog begin
+    	V(in_ref_delayed) <+ transition (!V(in_ref), delay); 
+    	V(in_sen_delayed) <+ transition (!V(in_sen), delay); 
+
+    	out_ref = transition(!( out_sen && !(V(in_ref) && V(in_ref_delayed)) ),10e-12);
+    	out_sen = transition(!( out_ref && !(V(in_sen) && V(in_sen_delayed)) ),10e-12); 
+    	V(out) <+ out_ref;
+    end
+
+endmodule

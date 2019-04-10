@@ -1,0 +1,23 @@
+/*============================================================
+  Filename:      vmixer.vams
+  Created On:    2016-04-17 21:51:18
+  Last Modified: 2016-04-17 22:19:24 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+
+module vmixer (
+	input voltage in1, in2,
+	output voltage out
+);
+
+	analog begin
+		V(out) <+ V(in1) * V(in2);
+	end
+
+endmodule

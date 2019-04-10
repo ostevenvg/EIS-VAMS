@@ -1,0 +1,40 @@
+/*============================================================
+  Filename:      phase_amp_switch__diff_comparator.vams
+  Created On:    2016-08-16 22:26:31
+  Last Modified: 2017-01-20 15:58:06 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module diff_comparator (
+	input voltage in_pos,
+	input voltage in_neg,
+	output voltage out_pos,
+	output voltage out_neg	
+);
+
+	parameter gain = 1e4, vss = -1, vdd = 1, slew_rate=1e12;
+	real vout_neg, vout_pos;
+
+    analog begin
+    	vout_pos =   gain * (V(in_pos) - V(in_neg))/2;
+    	vout_neg =  -gain * (V(in_pos) - V(in_neg))/2; 
+    	if (vout_pos>vdd) begin
+    		vout_pos = vdd;
+    		vout_neg = vss;
+    	end
+    	if (vout_pos<vss) begin
+    		vout_pos = vss;
+    		vout_neg = vdd;
+    	end
+    	V(out_pos) <+ slew(vout_pos,slew_rate);
+    	V(out_neg) <+ slew(vout_neg,slew_rate);
+    end
+
+endmodule

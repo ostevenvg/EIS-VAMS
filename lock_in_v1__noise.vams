@@ -1,0 +1,29 @@
+/*============================================================
+  Filename:      noise.vams
+  Created On:    2016-04-26 19:50:49
+  Last Modified: 2016-05-22 19:51:07 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module noise (
+	inout electrical in, out
+);
+
+	parameter real peak=0.01; 
+	
+	integer rand_spam=10000;
+	real rand_num;
+
+    analog begin
+    	rand_num = ($arandom % rand_spam);
+    	V(out) <+ V(in) + (peak * (rand_num / rand_spam));
+    end
+
+endmodule

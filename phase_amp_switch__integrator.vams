@@ -1,0 +1,27 @@
+/*============================================================
+  Filename:      phase_amp_switch__integrator.vams
+  Created On:    2016-08-17 22:20:43
+  Last Modified: 2017-01-20 15:15:10 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module integrator (
+	input voltage in,
+	input rst,
+	output voltage out
+);
+
+	real amp = 1e4;
+
+    analog begin
+    	V(out) <+ amp*idt(V(in),0,rst);
+    end
+
+endmodule

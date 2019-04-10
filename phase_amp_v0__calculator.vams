@@ -1,0 +1,59 @@
+/*============================================================
+  Filename:      phase_amp_v0__calculator.vams
+  Created On:    2017-01-17 22:08:01
+  Last Modified: 2017-01-20 16:10:44 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+`timescale 100ps/1ps 
+
+module calculator (
+	input [24:0] phase_cnt,
+	input phase_done,
+	input voltage vpeak,
+	input wreal fref,
+	output wreal Csensor,
+	output wreal Rsensor
+);
+
+assign Csensor = Csx;
+assign Rsensor = Rsx;
+
+real input_amp = 1; 
+real Av2i = 1000;
+real ft2d=10e9; //t2d frequency
+real nt2d=63;  //t2d #of measured cyc,es
+
+real ct2d_limit, Zphase_rad=0, Zamp=0, Cs=0, Rs=0, debug;
+real Csx, Rsx;
+
+analog begin
+	if(fref > 0) ct2d_limit = (nt2d * ft2d) / fref;
+	if (phase_done) begin
+		Zphase_rad = 2*`M_PI*(phase_cnt-ct2d_limit)/ct2d_limit;
+		Zamp= Av2i/(V(vpeak));
+
+		//Parallel R/C configuration
+		//Rs = Zamp * cos(Zphase_rad)*(1+tan(Zphase_rad)*tan(Zphase_rad));
+		//Cs = -tan(Zphase_rad) / (2*`M_PI*fref*Rs);
+
+		//Series R/C configuration
+		Rs = Zamp * cos(Zphase_rad);
+		Cs = -1 / (2*`M_PI*fref*Zamp*sin(Zphase_rad));
+	end
+end
+
+//Update wreal outputs
+always begin
+	#1
+	Csx = Cs;
+	Rsx = Rs;
+end
+
+endmodule

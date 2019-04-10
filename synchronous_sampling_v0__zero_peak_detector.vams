@@ -1,0 +1,42 @@
+/*============================================================
+  Filename:      zero_peak_detector.vams
+  Created On:    2016-08-21 15:24:15
+  Last Modified: 2016-08-21 16:08:43 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module zero_peak_detector (
+	input voltage in,
+	output voltage zero,
+	output voltage peak
+
+);
+
+	parameter pulse_width = 0.5n, vdd = 1;
+	real cmp_zero, cmp_zero_d, cmp_peak, cmp_peak_d;
+	real vzero, vpeak;
+
+    analog begin
+    	if (V(in) > 0) cmp_zero = vdd;
+    	else cmp_zero = 0;
+
+    	if (ddt(V(in)) > 0) cmp_peak = vdd;
+    	else cmp_peak = 0;
+
+    	cmp_zero_d = transition(cmp_zero,pulse_width);
+    	cmp_peak_d = transition(cmp_peak,pulse_width);
+
+    	V(zero) <+ (cmp_zero && !cmp_zero_d) || (!cmp_zero && cmp_zero_d);
+    	V(peak) <+ (cmp_peak && !cmp_peak_d) || (!cmp_peak && cmp_peak_d);
+    end
+
+
+
+endmodule

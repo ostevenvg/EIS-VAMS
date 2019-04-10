@@ -1,0 +1,35 @@
+/*============================================================
+  Filename:      peak_detector.vams
+  Created On:    2016-08-03 22:50:45
+  Last Modified: 2016-08-08 23:11:21 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module peak_detector (
+	input voltage in,
+	output voltage peak
+);
+
+	parameter real tau = 0.1u, gain = 1.0;
+	real v_peak = 0, v_peak0 = 0, t_peak0=0;
+
+    analog begin
+    	if (V(in)>v_peak) begin
+    		v_peak = V(in);
+    		v_peak0 = v_peak;
+    		t_peak0 = $abstime;
+    	end
+    	else  begin
+    		v_peak = v_peak0 * `M_PI ** ((t_peak0 - $abstime) / tau);  
+    	end
+    	V(peak) <+ gain * v_peak;
+    end
+
+endmodule

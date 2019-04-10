@@ -1,0 +1,39 @@
+/*============================================================
+  Filename:      oscillator_ALL__phase_detector.vams
+  Created On:    2016-03-24 14:42:21
+  Last Modified: 2017-01-02 16:32:44 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description:   If ref anticipates in, u output is activated.
+  				 If in anticipates ref, d output is activated.
+============================================================*/
+
+`include "disciplines.h"
+`timescale 1ps/1ps
+
+module phase_detector(
+	input  ref, in,
+	output reg u, d
+	);
+	
+	initial begin
+		u   = 0;
+		d   = 0;
+	end
+
+	assign rst = u && d;
+	
+	always @(posedge ref or posedge rst) begin
+		if (rst) u <= 0;
+		else u <= 1;
+	end
+
+	always @(posedge in or posedge rst) begin
+		if (rst) d <= 0;
+		else d <= 1;
+	end
+	
+endmodule
+

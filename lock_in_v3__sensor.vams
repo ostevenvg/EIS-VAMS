@@ -1,0 +1,25 @@
+/*============================================================
+  Filename:      sensor.vams
+  Created On:    2016-04-17 22:29:07
+  Last Modified: 2016-04-18 22:07:24 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module sensor (
+	inout electrical load
+);
+	
+  parameter real C=1e-12, R=10e3;
+
+  analog begin
+  		I(load) <+ C * ddt(V(load));
+  end
+
+endmodule

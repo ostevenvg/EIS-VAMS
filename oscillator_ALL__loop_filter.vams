@@ -1,0 +1,31 @@
+/*============================================================
+  Filename:      oscillator_ALL__loop_filter.vams
+  Created On:    2016-03-24 14:42:22
+  Last Modified: 2017-01-16 22:00:55 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+
+module loop_filter(
+	inout electrical in_out
+	);
+	
+	parameter real C1 = 2.23e-8;
+	parameter real C2 = 1.39e-7;
+	parameter real R = 312; 
+	
+	real i1, i2;
+	electrical x;
+
+	analog begin
+		V(in_out) <+ R*i1 + idt(i1)/C2; 
+		i2 = C1*ddt(V(in_out));
+		I(in_out) <+ i1 + i2;
+ 	end
+endmodule
+

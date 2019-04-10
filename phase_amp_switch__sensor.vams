@@ -1,0 +1,57 @@
+/*============================================================
+  Filename:      phase_amp_switch__sensor.vams
+  Created On:    2016-08-16 22:53:31
+  Last Modified: 2017-02-01 21:01:10 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module sensor (
+  inout electrical Iin_pos,
+  inout electrical Iin_neg,
+  output voltage Vout_ref_pos,
+  output voltage Vout_ref_neg,
+  output voltage Vout_sen_pos,
+  output voltage Vout_sen_neg  
+);
+
+  parameter real Rref=10e3, Rload=20e3, Cload=1e-12;
+  real Rx = 1e5; //model real loss and help differential modeling
+  electrical Vc_pos, Vc_neg, Ic_pos, Ic_neg, Ir_pos, Ir_neg;
+  electrical Vcommon;
+
+  analog begin
+  /* V(Iin_pos,Vout_ref_pos) <+ Rref*I(Iin_pos);
+   V(Iin_pos,Vc_pos) <+ Rref*I(Iin_pos)+ Rload*I(Iin_pos);   
+   I(Ir_pos) <+ V(Vc_pos,Vcommon) / Rx;
+   I(Ic_pos) <+ Cload * ddt(V(Vc_pos,Vcommon));
+   V(Vout_sen_pos) <+ V(Iin_pos); 
+
+   V(Iin_neg,Vout_ref_neg) <+ Rref*I(Iin_neg);
+   V(Iin_neg,Vc_neg) <+ Rref*I(Iin_neg)+ Rload*I(Iin_neg);   
+   I(Ir_neg) <+ V(Vc_neg,Vcommon) / Rx;
+   I(Ic_neg) <+ Cload * ddt(V(Vc_neg,Vcommon));
+   V(Vout_sen_neg) <+ V(Iin_neg); 
+  */
+
+    V(Iin_pos,Vout_ref_pos) <+ Rref*I(Iin_pos);
+    V(Iin_pos,Vc_pos) <+ Rref*I(Iin_pos)+ Rload*I(Iin_pos);
+    I(Ir_pos) <+ V(Vout_sen_pos,Vc_pos) / Rx;
+    I(Ic_pos) <+ Cload * ddt(V(Vc_pos,Vout_sen_pos));
+    I(Ir_pos) <+ I(Iin_pos) - I(Ic_pos);
+
+    V(Iin_neg,Vout_ref_neg) <+ Rref*I(Iin_neg);
+    V(Iin_neg,Vc_neg) <+ Rref*I(Iin_neg)+ Rload*I(Iin_neg);
+    I(Ir_neg) <+ V(Vout_sen_neg,Vc_neg) / Rx;
+    I(Ic_neg) <+ Cload * ddt(V(Vc_neg,Vout_sen_neg));
+    I(Ir_neg) <+ I(Iin_neg) - I(Ic_neg);
+    
+  end
+
+endmodule

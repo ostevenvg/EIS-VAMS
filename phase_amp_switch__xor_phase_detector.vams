@@ -1,0 +1,28 @@
+/*============================================================
+  Filename:      xor_phase_detector.vams
+  Created On:    2016-08-17 21:57:49
+  Last Modified: 2017-01-20 15:31:07 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module xor_phase_detector (
+	input in_pos1,
+	input in_pos2,
+	input in_neg1,
+	input in_neg2,
+	output out_pos,
+	output out_neg
+);
+
+
+	assign out_pos = in_pos1 ^ in_pos2;
+	assign out_neg = in_neg1 ^ in_neg2;
+
+endmodule

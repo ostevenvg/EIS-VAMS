@@ -1,0 +1,51 @@
+/*============================================================
+  Filename:      phase_amp_v0__time2digital.vams
+  Created On:    2016-08-13 15:39:49
+  Last Modified: 2017-01-19 09:46:26 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module time2digital (
+	input in,
+	input clk,
+	input rst,
+	output reg done,
+	output reg [24:0] phase_cnt
+);
+	
+	reg [5:0]  pulse_cnt;
+
+	initial begin
+		pulse_cnt = 0;
+		phase_cnt = 0;
+		done = 0;
+	end 
+
+	always @(posedge clk) begin
+		if (!rst) begin
+			phase_cnt <= 0;
+			done <= 0;
+		end
+		else if (in && !done) begin 
+			phase_cnt <= phase_cnt + 1;
+		end
+	end
+
+	always @(posedge in) begin
+		if (!rst) begin
+			pulse_cnt <= 0;
+		end
+		else if (!done) begin 
+			pulse_cnt <= pulse_cnt + 1;
+		end
+	    if (pulse_cnt == 0'b111111) done <= 1;
+	end
+
+endmodule

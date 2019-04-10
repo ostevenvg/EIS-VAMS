@@ -1,0 +1,28 @@
+/*============================================================
+  Filename:      phase_amp_v0__sensor.vams
+  Created On:    2016-04-17 22:29:07
+  Last Modified: 2017-01-19 10:49:20 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module sensor (
+	inout electrical load
+);
+	
+  parameter real C=1.35e-12, R=880;
+
+  analog begin
+  		//Parallel
+      //I(load) <+ C * ddt(V(load)) + V(load)/R;
+      //Series
+      V(load) <+ R*I(load) + (1/C)*idt(I(load));
+  end
+
+endmodule

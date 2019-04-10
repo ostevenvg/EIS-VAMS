@@ -1,0 +1,27 @@
+/*============================================================
+  Filename:      sin2square.vams
+  Created On:    2016-08-09 21:13:55
+  Last Modified: 2016-08-09 22:11:04 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module sin2square (
+	input voltage in,
+	output voltage out
+);
+	
+	parameter real ampl = 1;
+
+    analog begin
+    	if(V(in)>0) V(out) <+ ampl;
+		else V(out) <+ 0;
+    end
+
+endmodule

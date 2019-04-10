@@ -1,0 +1,25 @@
+/*============================================================
+  Filename:      cmp_rst.vams
+  Created On:    2016-08-22 20:47:30
+  Last Modified: 2016-08-22 22:32:46 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module cmp_rst (
+	input up,
+	input dn,
+	input in_rst,
+	output cmp_rst
+);
+
+
+    assign cmp_rst = (up || dn) && in_rst;
+
+endmodule

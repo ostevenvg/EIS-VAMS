@@ -1,0 +1,35 @@
+/*============================================================
+  Filename:      up_dn_counter.vams
+  Created On:    2016-08-22 21:36:47
+  Last Modified: 2016-08-22 22:56:55 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module up_dn_counter (
+	input  up,
+	input  dn, 
+	output reg [6:0] out
+);
+
+	
+	initial begin
+		out = 1;
+	end 
+
+	always @(posedge up or posedge dn) begin
+		if (up && out != 6'b111111) begin
+			out <= out + 1;
+		end
+		else if (dn && out != 6'b000000) begin 
+			out <= out - 1;
+		end
+	end
+
+endmodule

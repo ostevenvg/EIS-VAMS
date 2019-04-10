@@ -1,0 +1,42 @@
+/*============================================================
+  Filename:      phase_shifter.vams
+  Created On:    2016-04-11 17:45:14
+  Last Modified: 2016-04-25 09:47:47 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: adds 90 degrades of phase shift to a sinusoidal input
+============================================================*/
+
+`include "disciplines.h"
+
+module phase_shifter (
+	inout electrical in, out
+);
+
+	real cross_prev, cross_latest;
+	real period;
+	real phase_delay;
+
+
+	analog begin
+		//initial values
+	    @(initial_step) begin
+	    	cross_prev   = 0;
+	    	period = 1e-15;	
+	    end
+
+	    //period  calculation
+		@(cross(V(in),+1)) begin
+			if (cross_latest > 0) cross_prev =  cross_latest;
+		end
+		cross_latest = last_crossing(V(in),+1);	
+		if (cross_prev != 0) period = cross_latest - cross_prev;
+		phase_delay = 3*period/4; 
+
+		//90 degrades phase delay
+		V(out) <+ absdelay(V(in),phase_delay,1);	
+	end
+
+endmodule

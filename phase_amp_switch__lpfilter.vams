@@ -1,0 +1,29 @@
+/*============================================================
+  Filename:      lpfilter.vams
+  Created On:    2016-04-17 23:16:38
+  Last Modified: 2016-04-25 22:25:11 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module lpfilter (
+	inout electrical in, out
+);
+
+	parameter real R=160e3, C=10e-12;
+	electrical out_;
+
+    analog begin
+    	V(out_,in) <+ R*I(out_,in);
+    	I(out_) <+ C*ddt(V(out_));
+
+    	V(out,out_) <+ R*I(out,out_);
+    	I(out) <+ C*ddt(V(out));
+    end
+endmodule

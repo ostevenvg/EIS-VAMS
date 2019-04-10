@@ -1,0 +1,29 @@
+/*============================================================
+  Filename:      synchronous_sampling_v0__sample_and_hold.vams
+  Created On:    2016-08-21 20:03:11
+  Last Modified: 2017-01-19 11:39:32 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module sample_and_hold (
+	input voltage in,
+	input voltage sample,
+	output voltage out
+);
+
+	parameter trise = 0.1p; 
+	real vout=0;
+
+    analog begin
+    	@(cross(V(sample), +1))vout = V(in);
+    	V(out) <+ transition(vout,0,trise);
+    end
+
+endmodule

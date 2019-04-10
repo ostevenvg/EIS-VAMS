@@ -1,0 +1,28 @@
+/*============================================================
+  Filename:      testbench.vams
+  Created On:    2016-04-17 21:34:25
+  Last Modified: 2016-04-25 10:04:49 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module testbench (
+	output voltage vsin
+);
+
+	//Sin generator parameters
+	parameter real freq=100M, ampl=1, offset=0;			
+
+	analog begin
+		//Sin generator
+		V(vsin) <+ ampl*sin(2.0*`M_PI*freq*$abstime) + offset;
+	end
+
+endmodule
+

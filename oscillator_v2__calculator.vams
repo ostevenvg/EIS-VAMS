@@ -1,0 +1,31 @@
+/*============================================================
+  Filename:      oscillator_v2__calculator.vams
+  Created On:    2016-10-31 21:57:02
+  Last Modified: 2017-01-02 21:27:42 
+  Author:        Oscar Villalta G.
+  Project:       Impedance spectroscopy architecture modeling
+  Institution:   TEC-Costa Rica
+
+  Description: 
+============================================================*/
+
+`include "disciplines.h"
+`include "constants.h"
+
+module calculator (
+	input voltage v_vco,
+	input wreal fref
+
+);
+	
+	//VCO constants
+ 	parameter real fnom=500e6, Avco=200e6, n_div=8;
+
+	real cap;
+
+    analog begin
+    	//cap = 1e-12 * fnom / (n_div*fref-Avco*V(v_vco));
+        cap = 1e-12 * (fnom + Avco * V(v_vco)) / (n_div * fref); 
+    end
+
+endmodule
